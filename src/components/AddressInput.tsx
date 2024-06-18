@@ -12,6 +12,7 @@ function AddressInput({ label, setCoords }: AddressInputProps) {
   const [results, setResults] = useState<{ lat: string, lon: string, display_name: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedCoords, setSelectedCoords] = useState<{ lat: number, lon: number } | null>(null);
+  const [preventFetch, setPreventFetch] = useState(false);
 
   const fetchResults = useCallback(debounce(async (query: string) => {
     if (query.length > 2) {
@@ -24,8 +25,10 @@ function AddressInput({ label, setCoords }: AddressInputProps) {
   }, 500), []);
 
   useEffect(() => {
-    fetchResults(query);
-  }, [query, fetchResults]);
+    if (!preventFetch) {
+      fetchResults(query);
+    }
+  }, [query, fetchResults, preventFetch]);
 
   useEffect(() => {
     if (results.length > 0 && selectedCoords === null) {
@@ -43,6 +46,8 @@ function AddressInput({ label, setCoords }: AddressInputProps) {
     setCoords(coords.lat, coords.lon);
     setQuery(selectedOption.display_name);
     setResults([]);
+    setPreventFetch(true);
+    setTimeout(() => setPreventFetch(false), 4000); // Adjust the delay as needed
   };
 
   return (
