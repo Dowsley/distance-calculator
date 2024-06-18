@@ -21,11 +21,11 @@ const geodesic = (coords1: [number, number], coords2: [number, number]): number 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { sourceCoords, destinationCoords } = req.body;
+    const { sourceCoords, destinationCoords, sourceLabel, destinationLabel } = req.body;
 
     try {
-      if (!sourceCoords || !destinationCoords) {
-        throw new Error('Invalid coordinates');
+      if (!sourceCoords || !destinationCoords || !sourceLabel || !destinationLabel) {
+        throw new Error('Invalid coordinates or labels');
       }
 
       const sourceCoordsTuple: [number, number] = [sourceCoords.lat, sourceCoords.lon];
@@ -34,8 +34,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const newQuery = await prisma.distanceQuery.create({
         data: {
-          sourceAddress: `${sourceCoords.lat}, ${sourceCoords.lon}`,
-          destinationAddress: `${destinationCoords.lat}, ${destinationCoords.lon}`,
+          sourceAddress: sourceLabel,
+          destinationAddress: destinationLabel,
           distance,
         },
       });
