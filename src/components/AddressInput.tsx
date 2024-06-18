@@ -28,7 +28,7 @@ function AddressInput({ label, setCoords }: AddressInputProps) {
     if (!preventFetch) {
       fetchResults(query);
     }
-  }, [query, fetchResults, preventFetch]);
+  }, [query, fetchResults]);
 
   useEffect(() => {
     if (results.length > 0 && selectedCoords === null) {
@@ -40,6 +40,7 @@ function AddressInput({ label, setCoords }: AddressInputProps) {
   }, [results, setCoords, selectedCoords]);
 
   const handleSelect = (index: number) => {
+
     const selectedOption = results[index];
     const coords = { lat: parseFloat(selectedOption.lat), lon: parseFloat(selectedOption.lon) };
     setSelectedCoords(coords);
