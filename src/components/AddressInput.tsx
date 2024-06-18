@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Box, Input, Select, Spinner, FormControl, FormLabel } from '@chakra-ui/react';
+import { Box, Input, List, ListItem, Spinner, FormControl, FormLabel } from '@chakra-ui/react';
 import debounce from 'lodash/debounce';
 
 interface AddressInputProps {
@@ -36,6 +36,15 @@ function AddressInput({ label, setCoords }: AddressInputProps) {
     }
   }, [results, setCoords, selectedCoords]);
 
+  const handleSelect = (index: number) => {
+    const selectedOption = results[index];
+    const coords = { lat: parseFloat(selectedOption.lat), lon: parseFloat(selectedOption.lon) };
+    setSelectedCoords(coords);
+    setCoords(coords.lat, coords.lon);
+    setQuery(selectedOption.display_name);
+    setResults([]);
+  };
+
   return (
     <FormControl mb={4}>
       <FormLabel>{label}</FormLabel>
@@ -45,24 +54,21 @@ function AddressInput({ label, setCoords }: AddressInputProps) {
         onChange={(e) => setQuery(e.target.value)}
         mb={2}
       />
-      {loading ? (
-        <Spinner size="sm" />
-      ) : (
-        <Select
-          onChange={(e) => {
-            const selectedIndex = e.target.selectedIndex;
-            const selectedOption = results[selectedIndex];
-            const coords = { lat: parseFloat(selectedOption.lat), lon: parseFloat(selectedOption.lon) };
-            setSelectedCoords(coords);
-            setCoords(coords.lat, coords.lon);
-          }}
-        >
+      {loading && <Spinner size="sm" />}
+      {!loading && results.length > 0 && (
+        <List spacing={2} mt={2} border="1px solid #ccc" borderRadius="md" boxShadow="md" bg="white" zIndex="10" position="absolute" width="100%">
           {results.map((result, index) => (
-            <option key={index} value={result.display_name}>
+            <ListItem
+              key={index}
+              p={2}
+              cursor="pointer"
+              onClick={() => handleSelect(index)}
+              _hover={{ bg: 'gray.100' }}
+            >
               {result.display_name}
-            </option>
+            </ListItem>
           ))}
-        </Select>
+        </List>
       )}
     </FormControl>
   );
