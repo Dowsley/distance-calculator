@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// https://en.wikipedia.org/wiki/Haversine_formula
 const geodesic = (coords1: [number, number], coords2: [number, number]): number => {
   const toRad = (value: number): number => value * Math.PI / 180;
   const lat1 = toRad(coords1[0]);
